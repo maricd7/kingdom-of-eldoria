@@ -9,6 +9,7 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="styles.css" />
+    <script defer src="./app.js"></script>
   </head>
   <body>
     <h1 class="main-heading">Kingdom of Eldoria</h1>
@@ -24,8 +25,19 @@
         </div>
       </div>
       <div class="text-and-actions">
-        <div class="text-main-container">
-          <p>Welcome to Eldoria</p>
+        <div id="game-container" class="text-main-container">
+          <p class="prologue">
+            In the ancient Kingdom of Eldoria, peace and prosperity reigned for
+            centuries under the wise rule of King Aric. However, darkness
+            descended upon the land when the evil sorcerer Malakar appeared,
+            seeking to plunge the kingdom into chaos. Using forbidden magic,
+            Malakar captured the royal family and plunged Eldoria into an age of
+            despair. You, a brave adventurer, must embark on a perilous journey
+            to free the royal family and restore peace to Eldoria.
+          </p>
+          <button onclick="startQuest(0)" class="continue">continue...</button>
+          <!-- <p class="text-danger">Villagers Need Your help!</p> -->
+          <!-- <textarea>Welcome to Eldoria</textarea> -->
         </div>
         <div class="actions-container">
           <button>Fight</button>
