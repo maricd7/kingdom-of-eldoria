@@ -17,6 +17,8 @@ const gameContainer = document.getElementById("game-container");
 const continueButton = document.getElementById("continue-button");
 const actionsContainer = document.querySelector(".actions-container");
 const playerLevel = document.getElementById("player-level");
+const playerInput = document.getElementById("playerInput");
+const playerName = document.getElementById("player-name");
 
 const SteelDager = {
   type: "Weapon",
@@ -50,6 +52,10 @@ const Player = {
   levelUp: () => {
     playerLevel.innerText = `Level ${Player.level + 1}`;
   },
+  updatePlayerName: (newName) => {
+    Player.name = newName;
+    playerName.innerText = `Name:${newName}`;
+  },
 };
 
 const quests = [
@@ -70,6 +76,28 @@ const quests = [
         newXp = Player.xp + 100;
         Player.xp = newXp;
         Player.checkXp();
+        helpAttackBandit.classList.add("hidden");
+
+        const successMessage = document.createElement("p");
+        successMessage.innerText = "You have successfully defated bandits";
+        successMessage.classList.add("text-success");
+        gameContainer.appendChild(successMessage);
+        const xpMessage = document.createElement("p");
+        xpMessage.innerText = "You have gained 50XP";
+        xpMessage.classList.add("text-success");
+        gameContainer.appendChild(xpMessage);
+        const villagerMessage = document.createElement("p");
+        villagerMessage.innerText =
+          '"Villager : Thank you so much traveller... What is your name?";';
+        gameContainer.appendChild(villagerMessage);
+        playerInput.classList.toggle("hidden");
+        playerInput.addEventListener("keypress", (event) => {
+          if (event.key === "Enter") {
+            event.preventDefault();
+            Player.updatePlayerName(event.target.value);
+            playerInput.classList.toggle("hidden");
+          }
+        });
       };
     },
   },

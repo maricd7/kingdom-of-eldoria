@@ -17,7 +17,12 @@
       <div>
         <div class="player-stats-container">
           <h2>Stats:</h2>
-          <span id="player-level" class="inventory-element">Level</span>
+          <div class="inventory-elements">
+            <span id="player-name" class="inventory-element"
+              >Mysterious Traveller</span
+            >
+            <span id="player-level" class="inventory-element">Level</span>
+          </div>
         </div>
         <div class="inventory-container">
           <h2>Inventory</h2>
@@ -39,8 +44,12 @@
             continue...
           </button>
           <!-- <p class="text-danger">Villagers Need Your help!</p> -->
-          <!-- <textarea>Welcome to Eldoria</textarea> -->
         </div>
+        <textarea
+          placeholder="Write here..."
+          id="playerInput"
+          class="hidden"
+        ></textarea>
         <div class="actions-container">
           <!-- <button>Fight</button> -->
           <!-- <button>Run</button>
