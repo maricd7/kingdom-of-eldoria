@@ -25,12 +25,11 @@ const HealthPotion = {
     Player.heal(50);
     HealthPotion.quantity = HealthPotion.quantity - 1;
     if (HealthPotion.quantity < 1) {
-      console.log("kvantas", HealthPotion.quantity);
       Player.inventory = Player.inventory.filter(
         (item) => item !== HealthPotion
       );
-      Player.loadInventory();
     }
+    Player.loadInventory();
   },
 };
 
@@ -69,7 +68,6 @@ const Player = {
       const inventoryItem = document.createElement("span");
       inventoryItem.classList.add("inventory-element");
       if (item.quantity) {
-        console.log(item.quantity);
         inventoryItem.innerText = item.name + " x" + item.quantity;
       } else {
         inventoryItem.innerText = item.name;
@@ -131,7 +129,6 @@ const quests = [
         Player.health -= 51;
         playerHealth.innerHTML = "Health : " + Player.health;
         Player.checkHp();
-        console.log(quest.questXp, "kvest xp"); // Use the captured context
         const newXp = Player.xp + quest.questXp;
         Player.xp = newXp;
         Player.checkXp();
@@ -182,7 +179,7 @@ const quests = [
 
 const initilizeGame = () => {
   playerLevel.innerText = `Level ${Player.level}`;
-  // return console.log(Player.inventory);
+
   playerHealth.innerText = `Health: ${Player.health}`;
   playerXp.innerText = `XP ${Player.xp + "/" + Player.goalXp}`;
   playerGold.innerText = "Gold: " + Player.gold;
