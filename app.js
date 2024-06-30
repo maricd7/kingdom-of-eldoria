@@ -15,23 +15,26 @@ const SteelDager = {
   damage: 50,
   rarity: "Common",
 };
-const HealthPotion = {
-  type: "Healing",
-  name: "Health Potion",
-  heal: 50,
-  rarity: "Common",
-  quantity: 4,
-  use: () => {
-    Player.heal(50);
-    HealthPotion.quantity = HealthPotion.quantity - 1;
-    if (HealthPotion.quantity < 1) {
-      Player.inventory = Player.inventory.filter(
-        (item) => item !== HealthPotion
-      );
+
+class HealthPotion {
+  constructor() {
+    this.type = "Healing";
+    this.name = "Health Potion";
+    this.heal = 50;
+    this.rarity = "Common";
+    this.quantity = 1;
+  }
+
+  //pot healing method
+  use() {
+    Player.heal(this.heal);
+    this.quantity -= 1;
+    if (this.quantity < 1) {
+      Player.inventory = Player.inventory.filter((item) => item !== this);
     }
     Player.loadInventory();
-  },
-};
+  }
+}
 const BattleAxe = {
   type: "Weapon",
   name: "Battle Axe",
@@ -46,7 +49,7 @@ const Player = {
   xp: 0,
   goalXp: 100,
   gold: 50,
-  inventory: [SteelDager, HealthPotion],
+  inventory: [SteelDager, new HealthPotion()],
   equipedWeapon: SteelDager.name,
 
   //player methods
@@ -159,7 +162,7 @@ const quests = [
         actionsContainer.appendChild(leavePurse);
 
         lootBandit.onclick = () => {
-          handleLoot([HealthPotion, BattleAxe]);
+          handleLoot([new HealthPotion(), BattleAxe]);
           // Quest continuation
           const villagerMessage = document.createElement("p");
           villagerMessage.innerText =
