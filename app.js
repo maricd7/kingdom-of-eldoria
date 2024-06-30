@@ -17,13 +17,13 @@ const SteelDager = {
 };
 const HealthPotion = {
   type: "Healing",
-  name: "HealthPotion",
+  name: "Health Potion",
   heal: 50,
   rarity: "Common",
-  quantity: 1,
+  quantity: 4,
   use: () => {
     Player.heal(50);
-    HealthPotion.quantity -= 1;
+    HealthPotion.quantity = HealthPotion.quantity - 1;
     if (HealthPotion.quantity < 1) {
       console.log("kvantas", HealthPotion.quantity);
       Player.inventory = Player.inventory.filter(
@@ -43,11 +43,13 @@ const Player = {
   gold: 50,
   inventory: [SteelDager, HealthPotion],
   equipedWeapon: SteelDager.name,
+
   //player methods
   getPlayerName: (name) => {
     console.log(name);
   },
   checkXp: () => {
+    playerXp.innerText = "XP" + Player.xp;
     if (Player.xp >= Player.goalXp) {
       Player.levelUp();
     } else {
@@ -64,10 +66,14 @@ const Player = {
   loadInventory: () => {
     playerInventory.innerHTML = "";
     Player.inventory.forEach((item) => {
-      // console.log(item);
       const inventoryItem = document.createElement("span");
       inventoryItem.classList.add("inventory-element");
-      inventoryItem.innerText = item.name;
+      if (item.quantity) {
+        console.log(item.quantity);
+        inventoryItem.innerText = item.name + " x" + item.quantity;
+      } else {
+        inventoryItem.innerText = item.name;
+      }
       inventoryItem.onclick = () => {
         item.use();
       };
@@ -91,7 +97,7 @@ const Player = {
       playerHealth.classList.remove("damaged");
     }
   },
-  heal: function healPlayer(value) {
+  heal: (value) => {
     const healingMessage = document.createElement("p");
     healingMessage.innerText = "You have successfully healed";
     gameContainer.appendChild(healingMessage);
@@ -107,12 +113,13 @@ const quests = [
     index: 0,
     questName: "Village of Hope",
     questSummary:
-      "As you begin your journey, you come across the Village of Hope under attack by bandits. The villagers plead for your help. Defeating the bandits will earn you the villagers gratitude and valuable information about Malakars whereabouts.",
+      "As you begin your journey, you come across the Village of Hope under attack by bandits. The villagers plead for your help. Defeating the bandits will earn you the villagers' gratitude and valuable information about Malakar's whereabouts.",
     questObjective: "Help the villagers of Hope fend off a bandit attack.",
     completed: false,
     action: "Help villagers",
     questXp: 50,
-    questActionFunction: () => {
+    questActionFunction: function () {
+      const quest = this;
       const battleMessage = document.createElement("p");
       battleMessage.innerText = "Bandits attacked you!";
       gameContainer.appendChild(battleMessage);
@@ -120,37 +127,29 @@ const quests = [
       helpAttackBandit.innerText = `Attack with ${Player.equipedWeapon}`;
       actionsContainer.appendChild(helpAttackBandit);
       helpAttackBandit.onclick = () => {
-        //player stats updater
-        Player.health = Player.health - 51;
+        // Player stats updater
+        Player.health -= 51;
         playerHealth.innerHTML = "Health : " + Player.health;
         Player.checkHp();
-        newXp = Player.xp + this.questXp;
+        console.log(quest.questXp, "kvest xp"); // Use the captured context
+        const newXp = Player.xp + quest.questXp;
         Player.xp = newXp;
         Player.checkXp();
+        playerXp.innerText = `XP ${Player.xp + "/" + Player.goalXp}`;
+
         helpAttackBandit.classList.add("hidden");
 
-        //damage from battle
-        const damageMessage = document.createElement("p");
-        damageMessage.classList.add("text-danger");
-        damageMessage.innerText =
-          "One of bandits inflicted 50 damage.. make sure to heal";
-        gameContainer.appendChild(damageMessage);
-        Player.checkHp();
-        //quest completition main messages
-        const successMessage = document.createElement("p");
-        successMessage.innerText = "You have successfully defated bandits";
-        successMessage.classList.add("text-success");
-        gameContainer.appendChild(successMessage);
-        const xpMessage = document.createElement("p");
-        xpMessage.innerText = "You have gained 50XP";
-        xpMessage.classList.add("text-success");
-        gameContainer.appendChild(xpMessage);
+        // Damage from battle
+        createDamgeMessage(
+          `One of the bandits inflicted ${50} damage... make sure to heal`
+        );
 
-        //loot drops and actions
-        const lootMessage = document.createElement("p");
-        lootMessage.innerText = "One Of the bandits dropped a purse...";
-        gameContainer.appendChild(lootMessage);
+        // Quest completion main messages
+        createSuccessMessage("You have successfully defeated the bandits");
+        createXpMessage(50);
+        createLootMessage("One of the bandits dropped a purse...");
 
+        // Loot drops and actions
         const lootBandit = document.createElement("button");
         lootBandit.innerText = "Loot Bandit";
         const leavePurse = document.createElement("button");
@@ -162,10 +161,10 @@ const quests = [
         lootBandit.onclick = () => {
           console.log("bandit looted");
 
-          //quest continuation
+          // Quest continuation
           const villagerMessage = document.createElement("p");
           villagerMessage.innerText =
-            '"Villager : Thank you so much traveller... What is your name?";';
+            '"Villager : Thank you so much, traveller... What is your name?";';
           gameContainer.appendChild(villagerMessage);
           playerInput.classList.toggle("hidden");
           playerInput.addEventListener("keypress", (event) => {
@@ -204,4 +203,34 @@ const startQuest = (index) => {
     newAction.classList.add("hidden");
     quests[index].questActionFunction();
   };
+};
+
+//common message creation functions
+const createSuccessMessage = (message) => {
+  const successMessage = document.createElement("p");
+  successMessage.innerText = message;
+  successMessage.classList.add("text-success");
+  gameContainer.appendChild(successMessage);
+};
+
+const createXpMessage = (xp) => {
+  const xpMessage = document.createElement("p");
+  xpMessage.innerText = `You have gained ${xp}XP`;
+  xpMessage.classList.add("text-success");
+  gameContainer.appendChild(xpMessage);
+};
+
+const createLootMessage = (message) => {
+  const lootMessage = document.createElement("p");
+  lootMessage.innerText = message;
+  lootMessage.classList.add("text-warning");
+  gameContainer.appendChild(lootMessage);
+};
+
+const createDamgeMessage = (message) => {
+  const damageMessage = document.createElement("p");
+  damageMessage.classList.add("text-danger");
+  damageMessage.innerText = message;
+  gameContainer.appendChild(damageMessage);
+  Player.checkHp();
 };

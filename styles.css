@@ -45,6 +45,11 @@ h2 {
 .inventory-element {
   color: white;
 }
+#player-inventory {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
 
 /* PLAYER STATS STYLING */
 .player-stats-container {
