@@ -40,12 +40,16 @@ const Player = {
   getPlayerName: (name) => {
     console.log(name);
   },
-  checkXp: (currentXp, goalXp) => {
-    if (currentXp >= goalXp) {
-      console.log("Level Up!");
+  checkXp: () => {
+    if (Player.xp >= Player.goalXp) {
+      Player.levelUp();
+    } else {
+      console.log("You still need more xp");
     }
   },
-  // levelUp: (newLevel) => {},
+  levelUp: () => {
+    playerLevel.innerText = `Level ${Player.level + 1}`;
+  },
 };
 
 const quests = [
@@ -63,7 +67,9 @@ const quests = [
       actionsContainer.appendChild(helpAttackBandit);
       helpAttackBandit.onclick = () => {
         Player.health = Player.health - 50;
-        Player.xp = Player.xp + 100;
+        newXp = Player.xp + 100;
+        Player.xp = newXp;
+        Player.checkXp();
       };
     },
   },
