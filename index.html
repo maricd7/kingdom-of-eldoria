@@ -17,7 +17,7 @@
       <div>
         <div class="player-stats-container">
           <h2>Stats:</h2>
-          <span class="inventory-element">Level</span>
+          <span id="player-level" class="inventory-element">Level</span>
         </div>
         <div class="inventory-container">
           <h2>Inventory</h2>
@@ -35,14 +35,16 @@
             despair. You, a brave adventurer, must embark on a perilous journey
             to free the royal family and restore peace to Eldoria.
           </p>
-          <button onclick="startQuest(0)" class="continue">continue...</button>
+          <button id="continue-button" onclick="startQuest(0)" class="continue">
+            continue...
+          </button>
           <!-- <p class="text-danger">Villagers Need Your help!</p> -->
           <!-- <textarea>Welcome to Eldoria</textarea> -->
         </div>
         <div class="actions-container">
-          <button>Fight</button>
-          <button>Run</button>
-          <button>Shop</button>
+          <!-- <button>Fight</button> -->
+          <!-- <button>Run</button>
+          <button>Shop</button> -->
         </div>
       </div>
       <div class="quest-container">
