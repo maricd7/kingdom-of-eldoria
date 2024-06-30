@@ -5,6 +5,9 @@ const playerLevel = document.getElementById("player-level");
 const playerInput = document.getElementById("playerInput");
 const playerName = document.getElementById("player-name");
 const playerInventory = document.getElementById("player-inventory");
+const playerXp = document.getElementById("player-xp");
+const playerGold = document.getElementById("player-gold");
+const playerHealth = document.getElementById("player-health");
 
 const SteelDager = {
   type: "Weapon",
@@ -17,8 +20,17 @@ const HealthPotion = {
   name: "HealthPotion",
   heal: 50,
   rarity: "Common",
+  quantity: 1,
   use: () => {
-    Player.heal();
+    Player.heal(50);
+    HealthPotion.quantity -= 1;
+    if (HealthPotion.quantity < 1) {
+      console.log("kvantas", HealthPotion.quantity);
+      Player.inventory = Player.inventory.filter(
+        (item) => item !== HealthPotion
+      );
+      Player.loadInventory();
+    }
   },
 };
 
@@ -30,7 +42,7 @@ const Player = {
   goalXp: 100,
   gold: 50,
   inventory: [SteelDager, HealthPotion],
-
+  equipedWeapon: SteelDager.name,
   //player methods
   getPlayerName: (name) => {
     console.log(name);
@@ -49,14 +61,44 @@ const Player = {
     Player.name = newName;
     playerName.innerText = `Name:${newName}`;
   },
-  heal: function healPlayer(value) {
+  loadInventory: () => {
+    playerInventory.innerHTML = "";
+    Player.inventory.forEach((item) => {
+      // console.log(item);
+      const inventoryItem = document.createElement("span");
+      inventoryItem.classList.add("inventory-element");
+      inventoryItem.innerText = item.name;
+      inventoryItem.onclick = () => {
+        item.use();
+      };
+      playerInventory.appendChild(inventoryItem);
+    });
+  },
+  checkHp: () => {
+    console.log("Check up", Player.health);
     if (Player.health == 100) {
       const fullHealthMessage = document.createElement("p");
       fullHealthMessage.innerText = "Your health is already full";
       fullHealthMessage.classList.add("text-warning");
       gameContainer.appendChild(fullHealthMessage);
     }
+    if (Player.health < 50) {
+      console.log("loool");
+      playerHealth.classList.remove("healthy");
+      playerHealth.classList.add("damaged");
+    } else {
+      playerHealth.classList.add("healthy");
+      playerHealth.classList.remove("damaged");
+    }
+  },
+  heal: function healPlayer(value) {
+    const healingMessage = document.createElement("p");
+    healingMessage.innerText = "You have successfully healed";
+    gameContainer.appendChild(healingMessage);
+
     Player.health = Player.health + value;
+    Player.checkHp();
+    playerHealth.innerText = "Health: " + Player.health;
   },
 };
 
@@ -71,17 +113,29 @@ const quests = [
     action: "Help villagers",
     questXp: 50,
     questActionFunction: () => {
+      const battleMessage = document.createElement("p");
+      battleMessage.innerText = "Bandits attacked you!";
+      gameContainer.appendChild(battleMessage);
       const helpAttackBandit = document.createElement("button");
-      helpAttackBandit.innerText = `Attack with ${Player.inventory.weapon.name}`;
+      helpAttackBandit.innerText = `Attack with ${Player.equipedWeapon}`;
       actionsContainer.appendChild(helpAttackBandit);
       helpAttackBandit.onclick = () => {
         //player stats updater
-        Player.health = Player.health - 50;
+        Player.health = Player.health - 51;
+        playerHealth.innerHTML = "Health : " + Player.health;
+        Player.checkHp();
         newXp = Player.xp + this.questXp;
         Player.xp = newXp;
         Player.checkXp();
         helpAttackBandit.classList.add("hidden");
 
+        //damage from battle
+        const damageMessage = document.createElement("p");
+        damageMessage.classList.add("text-danger");
+        damageMessage.innerText =
+          "One of bandits inflicted 50 damage.. make sure to heal";
+        gameContainer.appendChild(damageMessage);
+        Player.checkHp();
         //quest completition main messages
         const successMessage = document.createElement("p");
         successMessage.innerText = "You have successfully defated bandits";
@@ -130,17 +184,10 @@ const quests = [
 const initilizeGame = () => {
   playerLevel.innerText = `Level ${Player.level}`;
   // return console.log(Player.inventory);
-
-  Player.inventory.forEach((item) => {
-    console.log(item);
-    const inventoryItem = document.createElement("span");
-    inventoryItem.classList.add("inventory-element");
-    inventoryItem.innerText = item.name;
-    inventoryItem.onclick = () => {
-      item.use();
-    };
-    playerInventory.appendChild(inventoryItem);
-  });
+  playerHealth.innerText = `Health: ${Player.health}`;
+  playerXp.innerText = `XP ${Player.xp + "/" + Player.goalXp}`;
+  playerGold.innerText = "Gold: " + Player.gold;
+  Player.loadInventory();
 };
 initilizeGame();
 
