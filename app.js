@@ -32,6 +32,12 @@ const HealthPotion = {
     Player.loadInventory();
   },
 };
+const BattleAxe = {
+  type: "Weapon",
+  name: "Battle Axe",
+  damage: 100,
+  rarity: "rare",
+};
 
 const Player = {
   playerName: "Mysterios Warrior",
@@ -96,10 +102,7 @@ const Player = {
     }
   },
   heal: (value) => {
-    const healingMessage = document.createElement("p");
-    healingMessage.innerText = "You have successfully healed";
-    gameContainer.appendChild(healingMessage);
-
+    createHealingMessage();
     Player.health = Player.health + value;
     Player.checkHp();
     playerHealth.innerText = "Health: " + Player.health;
@@ -144,7 +147,7 @@ const quests = [
         // Quest completion main messages
         createSuccessMessage("You have successfully defeated the bandits");
         createXpMessage(50);
-        createLootMessage("One of the bandits dropped a purse...");
+        handleLoot();
 
         // Loot drops and actions
         const lootBandit = document.createElement("button");
@@ -156,8 +159,7 @@ const quests = [
         actionsContainer.appendChild(leavePurse);
 
         lootBandit.onclick = () => {
-          console.log("bandit looted");
-
+          handleLoot([HealthPotion, BattleAxe]);
           // Quest continuation
           const villagerMessage = document.createElement("p");
           villagerMessage.innerText =
@@ -217,17 +219,40 @@ const createXpMessage = (xp) => {
   gameContainer.appendChild(xpMessage);
 };
 
-const createLootMessage = (message) => {
+const handleLoot = (items) => {
+  if (items) {
+    items.forEach((item) => {
+      let found = false;
+      Player.inventory.forEach((entry) => {
+        if (item.name === entry.name) {
+          entry.quantity += item.quantity;
+          found = true;
+        }
+      });
+      if (!found) {
+        Player.inventory.push({ ...item });
+      }
+    });
+  }
+
+  console.log(items, "itemi");
   const lootMessage = document.createElement("p");
-  lootMessage.innerText = message;
+  lootMessage.innerText = "Looks like there is some loot...";
   lootMessage.classList.add("text-warning");
   gameContainer.appendChild(lootMessage);
+  Player.loadInventory();
 };
-
 const createDamgeMessage = (message) => {
   const damageMessage = document.createElement("p");
   damageMessage.classList.add("text-danger");
   damageMessage.innerText = message;
   gameContainer.appendChild(damageMessage);
   Player.checkHp();
+};
+
+const createHealingMessage = () => {
+  const healingMessage = document.createElement("p");
+  healingMessage.innerText = "You have successfully healed";
+  healingMessage.classList.add("healthy");
+  gameContainer.appendChild(healingMessage);
 };
