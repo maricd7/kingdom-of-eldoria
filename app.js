@@ -8,7 +8,10 @@ const playerInventory = document.getElementById("player-inventory");
 const playerXp = document.getElementById("player-xp");
 const playerGold = document.getElementById("player-gold");
 const playerHealth = document.getElementById("player-health");
-
+const questModal = document.getElementById("quest-modal");
+const questModalBtn = document.getElementById("hide-quest");
+const questCompletedModal = document.getElementById("quest-modal-completed");
+const questCompletedModalBtn = document.getElementById("hide-quest-completed");
 const SteelDager = {
   type: "Weapon",
   name: "Steel Dagger",
@@ -82,6 +85,7 @@ const Player = {
         inventoryItem.innerText = item.name;
       }
       inventoryItem.onclick = () => {
+        console.log(item);
         item.use();
       };
       playerInventory.appendChild(inventoryItem);
@@ -126,6 +130,7 @@ const quests = [
       const quest = this;
       const battleMessage = document.createElement("p");
       battleMessage.innerText = "Bandits attacked you!";
+      battleMessage.classList.add("text-danger");
       gameContainer.appendChild(battleMessage);
       const helpAttackBandit = document.createElement("button");
       helpAttackBandit.innerText = `Attack with ${Player.equipedWeapon}`;
@@ -150,7 +155,6 @@ const quests = [
         // Quest completion main messages
         createSuccessMessage("You have successfully defeated the bandits");
         createXpMessage(50);
-        handleLoot();
 
         // Loot drops and actions
         const lootBandit = document.createElement("button");
@@ -167,6 +171,7 @@ const quests = [
           const villagerMessage = document.createElement("p");
           villagerMessage.innerText =
             '"Villager : Thank you so much, traveller... What is your name?";';
+          villagerMessage.classList.add("prologue");
           gameContainer.appendChild(villagerMessage);
           playerInput.classList.toggle("hidden");
           playerInput.addEventListener("keypress", (event) => {
@@ -174,6 +179,7 @@ const quests = [
               event.preventDefault();
               Player.updatePlayerName(event.target.value);
               playerInput.classList.toggle("hidden");
+              questCompletedModal.classList.toggle("hidden");
             }
           });
         };
@@ -196,6 +202,7 @@ const startQuest = (index) => {
   const questSummary = quests[index].questSummary;
   const newPar = document.createElement("p");
   newPar.innerText = questSummary;
+  newPar.classList.add("prologue");
   gameContainer.appendChild(newPar);
   continueButton.classList.toggle("hidden");
   const newAction = document.createElement("button");
@@ -203,6 +210,7 @@ const startQuest = (index) => {
   actionsContainer.appendChild(newAction);
   newAction.onclick = () => {
     newAction.classList.add("hidden");
+    questModal.classList.toggle("hidden");
     quests[index].questActionFunction();
   };
 };
@@ -227,24 +235,29 @@ const handleLoot = (items) => {
     items.forEach((item) => {
       let found = false;
       Player.inventory.forEach((entry) => {
-        if (item.name === entry.name) {
+        if (item.name === entry.name && item instanceof HealthPotion) {
           entry.quantity += item.quantity;
           found = true;
         }
       });
       if (!found) {
-        Player.inventory.push({ ...item });
+        if (item instanceof HealthPotion) {
+          Player.inventory.push(new HealthPotion());
+        } else {
+          Player.inventory.push(item);
+        }
       }
     });
   }
 
-  console.log(items, "itemi");
+  actionsContainer.innerHTML = "";
   const lootMessage = document.createElement("p");
   lootMessage.innerText = "Looks like there is some loot...";
   lootMessage.classList.add("text-warning");
   gameContainer.appendChild(lootMessage);
   Player.loadInventory();
 };
+
 const createDamgeMessage = (message) => {
   const damageMessage = document.createElement("p");
   damageMessage.classList.add("text-danger");
@@ -259,3 +272,10 @@ const createHealingMessage = () => {
   healingMessage.classList.add("healthy");
   gameContainer.appendChild(healingMessage);
 };
+
+questModalBtn.addEventListener("click", () => {
+  questModal.classList.toggle("hidden");
+});
+questCompletedModalBtn.addEventListener("click", () => {
+  questCompletedModal.classList.toggle("hidden");
+});
