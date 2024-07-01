@@ -137,12 +137,46 @@ h2 {
   border-radius: 1rem;
   background-image: url(https://img.freepik.com/free-photo/vintage-grunge-paper-background_1048-10911.jpg?size=626&ext=jpg&ga=GA1.1.1141335507.1719705600&semt=ais_user.jpg);
 }
+
 .quest-started-modal h2,
 p {
   margin: 0;
   color: #222;
 }
 
+/* SHOP STYLING  */
+.shop {
+  box-shadow: #000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  color: #222;
+  padding: 2rem 4rem;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  /* background-color: white; */
+  border-radius: 1rem;
+  background-image: url(https://img.freepik.com/free-photo/vintage-grunge-paper-background_1048-10911.jpg?size=626&ext=jpg&ga=GA1.1.1141335507.1719705600&semt=ais_user.jpg);
+}
+.shop h2,
+p {
+  margin: 0;
+  color: #222;
+}
+.shop-item-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 2rem;
+  flex-direction: column;
+}
+.shopItemCon {
+  display: flex;
+  justify-content: space-between;
+  gap: 2rem;
+}
 .hidden {
   display: none;
 }

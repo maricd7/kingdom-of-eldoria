@@ -12,20 +12,26 @@ const questModal = document.getElementById("quest-modal");
 const questModalBtn = document.getElementById("hide-quest");
 const questCompletedModal = document.getElementById("quest-modal-completed");
 const questCompletedModalBtn = document.getElementById("hide-quest-completed");
+const shopModal = document.querySelector(".shop");
+const exitShopBtn = document.querySelector(".exit-shop-btn");
+const openShopBtn = document.querySelector(".openShopBtn");
+
 const SteelDager = {
   type: "Weapon",
   name: "Steel Dagger",
   damage: 50,
   rarity: "Common",
+  price: 50,
 };
 
 class HealthPotion {
-  constructor() {
+  constructor(quantity) {
     this.type = "Healing";
     this.name = "Health Potion";
     this.heal = 50;
     this.rarity = "Common";
-    this.quantity = 1;
+    this.quantity = quantity;
+    this.price = 10;
   }
 
   //pot healing method
@@ -43,6 +49,7 @@ const BattleAxe = {
   name: "Battle Axe",
   damage: 100,
   rarity: "rare",
+  price: 150,
 };
 
 const Player = {
@@ -52,7 +59,7 @@ const Player = {
   xp: 0,
   goalXp: 100,
   gold: 50,
-  inventory: [SteelDager, new HealthPotion()],
+  inventory: [SteelDager, new HealthPotion(1)],
   equipedWeapon: SteelDager.name,
 
   //player methods
@@ -166,7 +173,7 @@ const quests = [
         actionsContainer.appendChild(leavePurse);
 
         lootBandit.onclick = () => {
-          handleLoot([new HealthPotion(), BattleAxe]);
+          handleLoot([new HealthPotion(1), BattleAxe]);
           // Quest continuation
           const villagerMessage = document.createElement("p");
           villagerMessage.innerText =
@@ -195,6 +202,8 @@ const initilizeGame = () => {
   playerXp.innerText = `XP ${Player.xp + "/" + Player.goalXp}`;
   playerGold.innerText = "Gold: " + Player.gold;
   Player.loadInventory();
+
+  initializeShop();
 };
 initilizeGame();
 
@@ -242,7 +251,7 @@ const handleLoot = (items) => {
       });
       if (!found) {
         if (item instanceof HealthPotion) {
-          Player.inventory.push(new HealthPotion());
+          Player.inventory.push(new HealthPotion(1));
         } else {
           Player.inventory.push(item);
         }
@@ -279,3 +288,47 @@ questModalBtn.addEventListener("click", () => {
 questCompletedModalBtn.addEventListener("click", () => {
   questCompletedModal.classList.toggle("hidden");
 });
+
+//SHOP LOGIC
+exitShopBtn.addEventListener("click", () => {
+  console.log("exited");
+  shopModal.classList.add("hidden");
+});
+openShopBtn.addEventListener("click", () => {
+  shopModal.classList.remove("hidden");
+});
+
+//initialize shop
+function initializeShop() {
+  const shopItems = [SteelDager, new HealthPotion(1), BattleAxe];
+  const shopItemContainer = document.createElement("div");
+  shopItems.forEach((shopItem) => {
+    shopItemContainer.classList.add("shop-item-container");
+    const shopItemName = document.createElement("p");
+    const shopItemPrice = document.createElement("p");
+    const shopItemCon = document.createElement("div");
+    shopItemCon.classList.add("shopItemCon");
+
+    shopItemName.innerText = shopItem.name;
+    shopItemPrice.innerText = shopItem.price;
+    shopItemCon.appendChild(shopItemName);
+    shopItemCon.appendChild(shopItemPrice);
+    shopItemContainer.appendChild(shopItemCon);
+
+    shopItemCon.addEventListener("click", () => {
+      buyItem(shopItem);
+    });
+  });
+  shopModal.appendChild(shopItemContainer);
+}
+
+function buyItem(item) {
+  //check player gold
+  if (item.price > Player.gold) {
+    return console.log("No Gold");
+  }
+  Player.gold = Player.gold - item.price;
+  playerGold.innerText = "Gold: " + Player.gold;
+  Player.inventory.push(item);
+  Player.loadInventory();
+}
