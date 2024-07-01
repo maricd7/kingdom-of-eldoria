@@ -189,8 +189,33 @@ const quests = [
               questCompletedModal.classList.toggle("hidden");
             }
           });
+          const secondQuestContinue = document.createElement("p");
+          secondQuestContinue.classList.add("prologue");
+          secondQuestContinue.innerText =
+            "Villager : One of the bandits escaped with the ancient artifact...please help us retrive it";
+          gameContainer.appendChild(secondQuestContinue);
+          const startSecondQuestBtn = document.createElement("button");
+          startSecondQuestBtn.innerText = "Go after Bandit";
+          startSecondQuestBtn.addEventListener("click", () => {
+            quests[1].questActionFunction();
+          });
+          actionsContainer.appendChild(startSecondQuestBtn);
         };
       };
+    },
+  },
+  {
+    index: 1,
+    questName: "The Forest of Shadows",
+    questSummary:
+      "The village elder tells you about an ancient artifact hidden deep within the Forest of Shadows. This artifact is said to hold the key to weakening Malakar's power.",
+    questObjective: "Retrieve the ancient artifact from the Forest of Shadows.",
+    completed: false,
+    action: "Go to the Forest",
+    questXp: 150,
+    questActionFunction: () => {
+      const quest = this;
+      console.log(quest, "Started");
     },
   },
 ];
