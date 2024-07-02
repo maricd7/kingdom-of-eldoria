@@ -73,6 +73,10 @@ const Player = {
   getPlayerName: (name) => {
     console.log(name);
   },
+  updatePlayerGold: (qty) => {
+    Player.gold += qty;
+    playerGold.innerText = "Gold: " + Player.gold;
+  },
   checkXp: () => {
     playerXp.innerText = "XP" + Player.xp;
     if (Player.xp >= Player.goalXp) {
@@ -142,7 +146,7 @@ const Player = {
     equipedWeaponMessage.classList.add("text-success");
     equipedWeaponMessage.innerText = `You have equipped ${weapon.name} it does ${weapon.damage} damage`;
     gameContainer.appendChild(equipedWeaponMessage);
-    loadInventory();
+    Player.loadInventory();
   },
 };
 
@@ -174,7 +178,7 @@ const quests = [
         Player.xp = newXp;
         Player.checkXp();
         playerXp.innerText = `XP ${Player.xp + "/" + Player.goalXp}`;
-
+        Player.updatePlayerGold(50);
         helpAttackBandit.classList.add("hidden");
 
         // Damage from battle
@@ -263,6 +267,10 @@ const quests = [
 
       attackBanditBoss.addEventListener("click", () => {
         if (Player.equipedWeapon.damage > 99) {
+          Player.xp += 150;
+          Player.checkXp();
+          Player.updatePlayerGold(200);
+
           const successMessage = document.createElement("p");
           successMessage.innerText =
             "You have successfully defeated the bandit boss!";
@@ -422,7 +430,7 @@ function buyItem(item) {
     return console.log("No Gold");
   }
   Player.gold = Player.gold - item.price;
-  playerGold.innerText = "Gold: " + Player.gold;
+  Player.updatePlayerGold(Player.gold);
   Player.inventory.push(item);
   Player.loadInventory();
 }
