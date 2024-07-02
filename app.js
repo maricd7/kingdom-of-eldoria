@@ -24,6 +24,13 @@ const SteelDager = {
   price: 50,
 };
 
+class ancientArtifact {
+  constructor() {
+    this.type = "Arifact";
+    this.name = "Ancient Artifact";
+  }
+}
+
 class HealthPotion {
   constructor(quantity) {
     this.type = "Healing";
@@ -60,7 +67,7 @@ const Player = {
   goalXp: 100,
   gold: 50,
   inventory: [SteelDager, new HealthPotion(1)],
-  equipedWeapon: SteelDager.name,
+  equipedWeapon: SteelDager,
 
   //player methods
   getPlayerName: (name) => {
@@ -93,7 +100,7 @@ const Player = {
       }
       inventoryItem.onclick = () => {
         if (item.type === "Weapon") {
-          return (Player.equipedWeapon = item);
+          return Player.equipWeapon(item);
         }
 
         item.use();
@@ -122,6 +129,21 @@ const Player = {
     Player.checkHp();
     playerHealth.innerText = "Health: " + Player.health;
   },
+  equipWeapon: (weapon) => {
+    if (Player.equipedWeapon === weapon) {
+      const alreadyEquipedWeaponMessage = document.createElement("p");
+      alreadyEquipedWeaponMessage.classList.add("text-success");
+      alreadyEquipedWeaponMessage.innerText = `${weapon.name} is already equipped.`;
+      gameContainer.appendChild(alreadyEquipedWeaponMessage);
+      return;
+    }
+    Player.equipedWeapon = weapon;
+    const equipedWeaponMessage = document.createElement("p");
+    equipedWeaponMessage.classList.add("text-success");
+    equipedWeaponMessage.innerText = `You have equipped ${weapon.name} it does ${weapon.damage} damage`;
+    gameContainer.appendChild(equipedWeaponMessage);
+    loadInventory();
+  },
 };
 
 const quests = [
@@ -141,7 +163,7 @@ const quests = [
       battleMessage.classList.add("text-danger");
       gameContainer.appendChild(battleMessage);
       const helpAttackBandit = document.createElement("button");
-      helpAttackBandit.innerText = `Attack with ${Player.equipedWeapon}`;
+      helpAttackBandit.innerText = `Attack with ${Player.equipedWeapon.name}`;
       actionsContainer.appendChild(helpAttackBandit);
       helpAttackBandit.onclick = () => {
         // Player stats updater
@@ -229,20 +251,39 @@ const quests = [
       gameContainer.appendChild(enteredForestMessage);
       questModal.classList.toggle("hidden");
       actionsContainer.innerHTML = "";
+
       //forest of shadows boss fight
       const banditBossMessage = document.createElement("p");
       banditBossMessage.innerText = "Bandit leader is in your path";
       banditBossMessage.classList.add("text-danger");
-
+      gameContainer.appendChild(banditBossMessage);
       const attackBanditBoss = document.createElement("button");
       attackBanditBoss.innerText = "Attack bandit boss";
       actionsContainer.appendChild(attackBanditBoss);
 
       attackBanditBoss.addEventListener("click", () => {
-        if (Player.equipedWeapon.name === "Battle Axe") {
-          console.log("win");
+        if (Player.equipedWeapon.damage > 99) {
+          const successMessage = document.createElement("p");
+          successMessage.innerText =
+            "You have successfully defeated the bandit boss!";
+          successMessage.classList.add("text-sucess");
+          const lootBaditBoss = document.createElement("button");
+          const artifactMessage = document.createElement("p");
+          artifactMessage.classList.add("prologue");
+          gameContainer.appendChild(successMessage);
+          gameContainer.appendChild(artifactMessage);
+          actionsContainer.innerHTML = "";
+          //loot bandit boss
+          artifactMessage.innerText =
+            "Looks like bandit boss dropped artifact...";
+          lootBaditBoss.innerText = "Loot Bandit boss";
+          actionsContainer.appendChild(lootBaditBoss);
+          lootBaditBoss.addEventListener("click", () => {
+            handleLoot([new ancientArtifact(), new HealthPotion(2)]);
+          });
+        } else {
+          console.log("lose");
         }
-        console.log("lose");
       });
     },
   },
