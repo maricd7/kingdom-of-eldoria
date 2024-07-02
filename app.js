@@ -92,14 +92,16 @@ const Player = {
         inventoryItem.innerText = item.name;
       }
       inventoryItem.onclick = () => {
-        console.log(item);
+        if (item.type === "Weapon") {
+          return (Player.equipedWeapon = item);
+        }
+
         item.use();
       };
       playerInventory.appendChild(inventoryItem);
     });
   },
   checkHp: () => {
-    console.log("Check up", Player.health);
     if (Player.health == 100) {
       const fullHealthMessage = document.createElement("p");
       fullHealthMessage.innerText = "Your health is already full";
@@ -107,7 +109,6 @@ const Player = {
       gameContainer.appendChild(fullHealthMessage);
     }
     if (Player.health < 50) {
-      console.log("loool");
       playerHealth.classList.remove("healthy");
       playerHealth.classList.add("damaged");
     } else {
@@ -194,12 +195,16 @@ const quests = [
           secondQuestContinue.innerText =
             "Villager : One of the bandits escaped with the ancient artifact...please help us retrive it";
           gameContainer.appendChild(secondQuestContinue);
-          const startSecondQuestBtn = document.createElement("button");
-          startSecondQuestBtn.innerText = "Go after Bandit";
-          startSecondQuestBtn.addEventListener("click", () => {
+          const exploreTheVillage = document.createElement("button");
+          const goAfterBandits = document.createElement("button");
+          exploreTheVillage.innerText = "Explore the Village";
+
+          goAfterBandits.innerText = "Go after bandit";
+          goAfterBandits.addEventListener("click", () => {
             quests[1].questActionFunction();
           });
-          actionsContainer.appendChild(startSecondQuestBtn);
+          actionsContainer.appendChild(goAfterBandits);
+          actionsContainer.appendChild(exploreTheVillage);
         };
       };
     },
@@ -215,7 +220,30 @@ const quests = [
     questXp: 150,
     questActionFunction: () => {
       const quest = this;
-      console.log(quest, "Started");
+      const questMessage = document.createElement("p");
+      questMessage.innerText = this.questObjective;
+      questMessage.classList.add("prologue");
+      const enteredForestMessage = document.createElement("p");
+      enteredForestMessage.innerText = "You entered Forest of Shadows";
+      enteredForestMessage.classList.add("prologue");
+      gameContainer.appendChild(enteredForestMessage);
+      questModal.classList.toggle("hidden");
+      actionsContainer.innerHTML = "";
+      //forest of shadows boss fight
+      const banditBossMessage = document.createElement("p");
+      banditBossMessage.innerText = "Bandit leader is in your path";
+      banditBossMessage.classList.add("text-danger");
+
+      const attackBanditBoss = document.createElement("button");
+      attackBanditBoss.innerText = "Attack bandit boss";
+      actionsContainer.appendChild(attackBanditBoss);
+
+      attackBanditBoss.addEventListener("click", () => {
+        if (Player.equipedWeapon.name === "Battle Axe") {
+          console.log("win");
+        }
+        console.log("lose");
+      });
     },
   },
 ];
