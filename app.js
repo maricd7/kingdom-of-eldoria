@@ -150,6 +150,21 @@ const Player = {
   },
 };
 
+class inventory {
+  constructor() {
+    this.items;
+    this.loader = () => {};
+  }
+}
+
+class inventoryItem {
+  constructor(item) {
+    this.name = item.name;
+    this.type = item.type;
+  }
+}
+//napraivti klasu inventori setter geter za qty
+
 const quests = [
   {
     index: 0,
