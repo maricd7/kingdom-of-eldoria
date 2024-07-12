@@ -150,21 +150,6 @@ const Player = {
   },
 };
 
-class inventory {
-  constructor() {
-    this.items;
-    this.loader = () => {};
-  }
-}
-
-class inventoryItem {
-  constructor(item) {
-    this.name = item.name;
-    this.type = item.type;
-  }
-}
-//napraivti klasu inventori setter geter za qty
-
 const quests = [
   {
     index: 0,
@@ -306,6 +291,82 @@ const quests = [
           });
         } else {
           console.log("lose");
+        }
+      });
+    },
+  },
+  {
+    index: 2,
+    questName: "The Hidden Cave",
+    questSummary:
+      "After retrieving the ancient artifact, you learn about a hidden cave where a powerful guardian protects a magical gem. This gem is essential to your quest to defeat Malakar.",
+    questObjective:
+      "Defeat the guardian and retrieve the magical gem from the hidden cave.",
+    completed: false,
+    action: "Enter the Cave",
+    questXp: 200,
+    questActionFunction: function () {
+      const quest = this;
+      const questMessage = document.createElement("p");
+      questMessage.innerText = this.questObjective;
+      questMessage.classList.add("prologue");
+      gameContainer.appendChild(questMessage);
+      questModal.classList.toggle("hidden");
+      actionsContainer.innerHTML = "";
+
+      const enteredCaveMessage = document.createElement("p");
+      enteredCaveMessage.innerText = "You entered the hidden cave.";
+      enteredCaveMessage.classList.add("prologue");
+      gameContainer.appendChild(enteredCaveMessage);
+
+      const guardianMessage = document.createElement("p");
+      guardianMessage.innerText = "A powerful guardian blocks your path.";
+      guardianMessage.classList.add("text-danger");
+      gameContainer.appendChild(guardianMessage);
+
+      const attackGuardian = document.createElement("button");
+      attackGuardian.innerText = `Attack Guardian with ${Player.equipedWeapon.name}`;
+      actionsContainer.appendChild(attackGuardian);
+
+      attackGuardian.addEventListener("click", () => {
+        if (Player.equipedWeapon.damage > 100) {
+          Player.health -= 75;
+          playerHealth.innerText = "Health : " + Player.health;
+          Player.checkHp();
+
+          if (Player.health > 0) {
+            Player.xp += 200;
+            Player.checkXp();
+            Player.updatePlayerGold(250);
+
+            const successMessage = document.createElement("p");
+            successMessage.innerText =
+              "You have successfully defeated the guardian!";
+            successMessage.classList.add("text-success");
+            gameContainer.appendChild(successMessage);
+
+            const gemMessage = document.createElement("p");
+            gemMessage.innerText = "You have retrieved the magical gem!";
+            gemMessage.classList.add("prologue");
+            gameContainer.appendChild(gemMessage);
+
+            handleLoot([new ancientArtifact(), new HealthPotion(3)]);
+
+            const questCompleteMessage = document.createElement("p");
+            questCompleteMessage.innerText = "Quest Complete: The Hidden Cave";
+            questCompleteMessage.classList.add("text-success");
+            gameContainer.appendChild(questCompleteMessage);
+          } else {
+            const failMessage = document.createElement("p");
+            failMessage.innerText = "You have been defeated by the guardian.";
+            failMessage.classList.add("text-danger");
+            gameContainer.appendChild(failMessage);
+          }
+        } else {
+          const weakWeaponMessage = document.createElement("p");
+          weakWeaponMessage.innerText = `Your weapon is too weak to defeat the guardian.`;
+          weakWeaponMessage.classList.add("text-danger");
+          gameContainer.appendChild(weakWeaponMessage);
         }
       });
     },
